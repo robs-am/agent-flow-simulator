@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "_comentario": "Usado pelo server/src/services/mcpFilesystemService.js para ler arquivos reais do disco quando o usuario escolhe 'Analisar pasta local' no app. Essa e a unica conexao MCP genuina do projeto - a analise de GitHub usa chamada direta a API (ver server/src/services/githubService.js e a nota em .claude/mcp-notes.md sobre por que)."
+    }
+  }
+}

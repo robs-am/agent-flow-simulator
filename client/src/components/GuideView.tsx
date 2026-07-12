@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import FlowDiagram from "./FlowDiagram";
-import {
-  GUIDE_BY_NODE,
-  GUIDE_ORDER,
-  QUICK_TEST,
-  ORCHESTRA,
-  EVOLUTION_2026,
-} from "../data/guideContent";
+import { GUIDE_BY_NODE, GUIDE_ORDER, QUICK_TEST, EVOLUTION_2026 } from "../data/guideContent";
 import type { ComponentGuide } from "../data/guideContent";
 import type { NodeId } from "../types";
 
@@ -76,6 +70,31 @@ function DetailPanel({ c }: { c: ComponentGuide }) {
           <p className="text-[13px] text-[hsl(var(--muted-foreground))] leading-snug">{c.thinkOf}</p>
         </div>
       </div>
+
+      {/* Analogia da orquestra — agora por componente, não mais um card solto */}
+      <div className="mt-4 pt-3 border-t border-[hsl(var(--border))]">
+        <p className="font-mono-tight text-[10px] uppercase tracking-[0.12em] text-[hsl(var(--muted-foreground))] mb-1">
+          🎼 Na orquestra
+        </p>
+        <p className="text-[13px] text-[hsl(var(--muted-foreground))] leading-snug">{c.orchestra}</p>
+      </div>
+
+      {/* Evolução 2026 aparece só no detalhe de Subagents (é sobre subagents) */}
+      {c.id === "subagents" && (
+        <div className="mt-4 pt-3 border-t border-[hsl(var(--border))]">
+          <p className="font-mono-tight text-[10px] uppercase tracking-[0.12em] mb-2" style={{ color: accent }}>
+            Evolução 2026 — nem todo subagent é "isolado"
+          </p>
+          <ul className="space-y-2">
+            {EVOLUTION_2026.map((e) => (
+              <li key={e.title} className="pl-3 border-l-2" style={{ borderColor: `hsl(${c.accent} / 0.4)` }}>
+                <p className="text-[13px] font-semibold">{e.title}</p>
+                <p className="text-[12px] text-[hsl(var(--muted-foreground))] leading-snug">{e.text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </Card>
   );
 }
@@ -133,35 +152,6 @@ export default function GuideView() {
         </div>
       </Card>
 
-      {/* Analogia da orquestra */}
-      <Card className="p-5">
-        <SectionLabel>Analogia — uma orquestra</SectionLabel>
-        <ul className="space-y-3">
-          {ORCHESTRA.map((o) => (
-            <li key={o.role}>
-              <p className="text-sm font-semibold">{o.role}</p>
-              <p className="text-[13px] text-[hsl(var(--muted-foreground))] leading-snug">{o.text}</p>
-            </li>
-          ))}
-        </ul>
-      </Card>
-
-      {/* Evolução 2026 */}
-      <Card className="p-5">
-        <SectionLabel>Evolução 2026 — nem todo subagent é "isolado"</SectionLabel>
-        <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed mb-4">
-          O modelo clássico (isolado, só devolve resumo) continua sendo a base. Mas o ecossistema
-          evoluiu e "subagent" deixou de ser uma categoria única:
-        </p>
-        <ul className="space-y-3">
-          {EVOLUTION_2026.map((e) => (
-            <li key={e.title} className="pl-3 border-l-2 border-[hsl(var(--border))]">
-              <p className="text-sm font-semibold">{e.title}</p>
-              <p className="text-[13px] text-[hsl(var(--muted-foreground))] leading-snug">{e.text}</p>
-            </li>
-          ))}
-        </ul>
-      </Card>
     </div>
   );
 }

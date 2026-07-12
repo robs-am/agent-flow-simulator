@@ -21,6 +21,8 @@ export interface ComponentGuide {
   examples: string[];
   dontPut: string;
   thinkOf: string;
+  /** o papel na analogia da orquestra — mostrado no painel de detalhe */
+  orchestra: string;
 }
 
 export const COMPONENTS: ComponentGuide[] = [
@@ -43,6 +45,7 @@ export const COMPONENTS: ComponentGuide[] = [
     dontPut:
       "Procedimentos de tarefa específica (isso é Skill) ou conexões com ferramentas externas (isso é MCP).",
     thinkOf: "\"Employee handbook\" — o que TODO agente deve saber desde o início.",
+    orchestra: "A partitura geral na estante do maestro — as marcações que valem a peça inteira.",
   },
   {
     id: "skills",
@@ -61,6 +64,7 @@ export const COMPONENTS: ComponentGuide[] = [
     ],
     dontPut: "Regras permanentes tipo \"Always use X\" ou regras de estilo — isso é AGENTS.MD.",
     thinkOf: "\"Onboarding procedures\" — como executar tarefas específicas, quando necessário.",
+    orchestra: "Os trechos técnicos da partitura — o maestro só abre a página na passagem que exige.",
   },
   {
     id: "mcp",
@@ -81,6 +85,7 @@ export const COMPONENTS: ComponentGuide[] = [
     dontPut:
       "Regras de código (AGENTS.MD) ou workflows internos (Skills) — coisas que não precisam de API externa.",
     thinkOf: "\"IT infrastructure\" — ferramentas e serviços externos, quando precisa acessar.",
+    orchestra: "A equipe fora do palco (luz, som) — acionada só quando precisa de algo que não está com os músicos.",
   },
   {
     id: "subagents",
@@ -101,6 +106,7 @@ export const COMPONENTS: ComponentGuide[] = [
     dontPut:
       "Tarefas triviais que o agente principal resolve direto — delegar tem custo de coordenação.",
     thinkOf: "\"Naipes da orquestra\" — cada seção ensaia isolada e entrega só o resultado.",
+    orchestra: "Os naipes especializados — cada um ensaia isolado na sua seção e entrega só o resultado.",
   },
 ];
 
@@ -124,6 +130,7 @@ export const AGENT: ComponentGuide = {
   ],
   dontPut: "Ele não guarda regras nem procedimentos — isso vive nos componentes ao redor.",
   thinkOf: "\"O maestro\" — rege, decide o tempo e indica quem entra em cada momento.",
+  orchestra: "O maestro — não toca nenhum instrumento; rege, decide o tempo e indica quem entra.",
 };
 
 // Lookup por nó (inclui o agente) e a ordem de navegação no guia.
@@ -141,31 +148,8 @@ export const QUICK_TEST: { question: string; answer: string }[] = [
   { question: "Isso é trabalho especializado e isolado?", answer: "SUBAGENTS" },
 ];
 
-// A analogia da orquestra — cada linha conecta um componente ao papel dele.
-export const ORCHESTRA: { role: string; text: string }[] = [
-  {
-    role: "Agente principal = o maestro",
-    text: "Não toca nenhum instrumento — rege, decide o tempo e indica quem entra em cada momento.",
-  },
-  {
-    role: "AGENTS.MD = a partitura geral",
-    text: "Sempre na estante do maestro. A interpretação e as marcações que valem a peça inteira, do início ao fim.",
-  },
-  {
-    role: "SKILLS = trechos técnicos da partitura",
-    text: "O maestro só abre aquela página quando a orquestra chega numa passagem que exige execução particular.",
-  },
-  {
-    role: "MCP = a equipe fora do palco",
-    text: "Luz, som, transmissão ao vivo — só aciona quando precisa de algo que não está nas mãos dos músicos.",
-  },
-  {
-    role: "SUBAGENTS = os naipes especializados",
-    text: "Cada naipe ensaia isolado na própria seção e devolve ao maestro só o resultado, não o ensaio inteiro.",
-  },
-];
-
-// Evolução 2026 — nem todo subagent é mais "isolado".
+// Evolução 2026 — nem todo subagent é mais "isolado". Mostrada só no painel
+// de detalhe quando o nó Subagents está selecionado (é sobre subagents).
 export const EVOLUTION_2026: { title: string; text: string }[] = [
   {
     title: "Agent Teams (experimental)",

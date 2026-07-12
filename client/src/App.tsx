@@ -1,51 +1,21 @@
-import { useEffect, useRef, useState } from "react";
-import { simulateRequest, analyzeGithubRepo, analyzeLocalProject } from "./services/api";
-import FlowDiagram from "./components/FlowDiagram";
-import ScenarioPicker from "./components/ScenarioPicker";
-import StepLog from "./components/StepLog";
-import { Card, CardContent } from "@/components/ui/card";
-import type { NodeId, SimulationResult } from "./types";
+import { useState } from "react";
+import SimulatorView from "./components/SimulatorView";
+import GuideView from "./components/GuideView";
 
-const STEP_DELAY_MS = 900;
+// Duas telas sob um menu: o simulador (mostra o fluxo acontecendo) e o guia
+// (explica o que é cada componente). Navegação leve via useState — não vale
+// a pena trazer um router pra duas views.
+
+type View = "sim" | "guide";
+
+const TABS: { id: View; label: string; hint: string }[] = [
+  { id: "sim", label: "Simulador", hint: "Veja o fluxo de decisão acontecendo" },
+  { id: "guide", label: "Guia", hint: "Entenda o que é cada componente" },
+];
 
 export default function App() {
-  const [steps, setSteps] = useState<SimulationResult["steps"]>([]);
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const [running, setRunning] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  useEffect(() => {
-    return () => timeoutsRef.current.forEach(clearTimeout);
-  }, []);
-
-  async function runAnimation(fetchSteps: () => Promise<SimulationResult>) {
-    timeoutsRef.current.forEach(clearTimeout);
-    timeoutsRef.current = [];
-    setRunning(true);
-    setError(null);
-    setActiveIndex(-1);
-    setSteps([]);
-
-    try {
-      const result = await fetchSteps();
-      setSteps(result.steps);
-
-      result.steps.forEach((_, i) => {
-        const t = setTimeout(() => {
-          setActiveIndex(i);
-          if (i === result.steps.length - 1) setRunning(false);
-        }, i * STEP_DELAY_MS);
-        timeoutsRef.current.push(t);
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro desconhecido");
-      setRunning(false);
-    }
-  }
-
-  const visitedNodes: NodeId[] = steps.slice(0, activeIndex).map((s) => s.node);
-  const activeNode: NodeId | null = activeIndex >= 0 ? steps[activeIndex]?.node ?? null : null;
+  const [view, setView] = useState<View>("sim");
+  const activeHint = TABS.find((t) => t.id === view)?.hint;
 
   return (
     <div className="min-h-screen">
@@ -57,39 +27,35 @@ export default function App() {
           Como um agente decide o que consultar
         </h1>
         <p className="text-sm text-[hsl(var(--muted-foreground))] mb-6 max-w-lg">
-          AGENTS.md, Skills, MCP e Subagents — com exemplos, um repositório
-          GitHub real, ou uma pasta local via MCP.
+          AGENTS.md, Skills, MCP e Subagents — com exemplos, um repositório GitHub real, ou uma pasta
+          local via MCP.
         </p>
 
-        <Card className="p-4">
-          <ScenarioPicker
-            onRunExample={(text) => runAnimation(() => simulateRequest(text))}
-            onRunGithub={(owner, repo) => runAnimation(() => analyzeGithubRepo(owner, repo))}
-            onRunLocal={(path) => runAnimation(() => analyzeLocalProject(path))}
-            disabled={running}
-          />
-        </Card>
+        {/* Menu de navegação entre as telas */}
+        <nav className="flex items-center gap-1 border-b border-[hsl(var(--border))] mb-6">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setView(tab.id)}
+              aria-current={view === tab.id ? "page" : undefined}
+              className={`font-mono-tight text-[13px] uppercase tracking-[0.12em] px-3 py-2 -mb-px border-b-2 transition-colors ${
+                view === tab.id
+                  ? "border-[hsl(var(--primary))] text-[hsl(var(--foreground))]"
+                  : "border-transparent text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+          {activeHint && (
+            <span className="ml-auto hidden sm:block text-[12px] text-[hsl(var(--muted-foreground))]">
+              {activeHint}
+            </span>
+          )}
+        </nav>
 
-        {error && (
-          <p className="text-sm text-[hsl(var(--destructive))] mt-3 font-mono-tight">
-            {error}
-          </p>
-        )}
-
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          <Card className="p-4">
-            <CardContent className="p-0 flex justify-center">
-              <FlowDiagram activeNode={activeNode} visitedNodes={visitedNodes} />
-            </CardContent>
-          </Card>
-
-          <Card className="p-4 lg:max-h-[420px] lg:overflow-y-auto">
-            <p className="font-mono-tight text-[11px] uppercase tracking-[0.15em] text-[hsl(var(--muted-foreground))] mb-3">
-              Passos
-            </p>
-            <StepLog steps={steps} revealedCount={activeIndex + 1} />
-          </Card>
-        </div>
+        {view === "sim" ? <SimulatorView /> : <GuideView />}
       </div>
     </div>
   );

@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { simulateRequest, analyzeGithubRepo, analyzeLocalProject } from "../services/api";
+import {
+  simulateRequest,
+  classifyRequestAI,
+  analyzeGithubRepo,
+  analyzeLocalProject,
+} from "../services/api";
+import { Sparkles } from "lucide-react";
 import FlowDiagram from "./FlowDiagram";
 import ScenarioPicker from "./ScenarioPicker";
 import StepLog from "./StepLog";
@@ -16,6 +22,9 @@ export default function SimulatorView() {
   const [steps, setSteps] = useState<SimulationResult["steps"]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [running, setRunning] = useState(false);
+  // `loading` cobre só a chamada à API (antes dos passos chegarem); o overlay
+  // central usa ele pra não tapar a animação do diagrama, que vem depois.
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -27,12 +36,14 @@ export default function SimulatorView() {
     timeoutsRef.current.forEach(clearTimeout);
     timeoutsRef.current = [];
     setRunning(true);
+    setLoading(true);
     setError(null);
     setActiveIndex(-1);
     setSteps([]);
 
     try {
       const result = await fetchSteps();
+      setLoading(false); // chegaram os passos — some o overlay, começa a animação
       setSteps(result.steps);
 
       result.steps.forEach((_, i) => {
@@ -44,6 +55,7 @@ export default function SimulatorView() {
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
+      setLoading(false);
       setRunning(false);
     }
   }
@@ -53,9 +65,20 @@ export default function SimulatorView() {
 
   return (
     <>
+      {/* Overlay central enquanto a IA processa (antes dos passos chegarem) */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-[hsl(var(--background)/0.4)] backdrop-blur-sm">
+          <Sparkles className="size-16 text-[hsl(var(--primary))] animate-pulse" />
+          <p className="font-mono-tight text-sm uppercase tracking-[0.15em] text-[hsl(var(--primary))] animate-pulse">
+            Analisando
+          </p>
+        </div>
+      )}
+
       <Card className="p-4">
         <ScenarioPicker
           onRunExample={(text) => runAnimation(() => simulateRequest(text))}
+          onRunAI={(text) => runAnimation(() => classifyRequestAI(text))}
           onRunGithub={(owner, repo) => runAnimation(() => analyzeGithubRepo(owner, repo))}
           onRunLocal={(path) => runAnimation(() => analyzeLocalProject(path))}
           disabled={running}

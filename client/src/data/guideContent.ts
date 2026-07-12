@@ -10,20 +10,16 @@
 import type { NodeId } from "../types";
 
 export interface ComponentGuide {
-  id: Exclude<NodeId, "agent">;
+  id: NodeId;
   emoji: string;
-  /** cor de destaque do card — segue o código de cores do material original */
   accent: string;
   name: string;
-  /** frase curta de identidade, ex: "Quem você é" */
   tagline: string;
-  /** rótulo do estado de carregamento, ex: "SEMPRE presente" */
   state: string;
   whatIs: string;
   whenEnters: string;
   examples: string[];
   dontPut: string;
-  /** a analogia "pense assim" */
   thinkOf: string;
 }
 
@@ -107,6 +103,35 @@ export const COMPONENTS: ComponentGuide[] = [
     thinkOf: "\"Naipes da orquestra\" — cada seção ensaia isolada e entrega só o resultado.",
   },
 ];
+
+// O agente principal — o núcleo do diagrama. Não é um dos "4 ao redor",
+// é quem orquestra todos eles, então tem entrada própria pro painel do guia.
+export const AGENT: ComponentGuide = {
+  id: "agent",
+  emoji: "🎼",
+  accent: "194 45% 38%",
+  name: "AGENTE PRINCIPAL",
+  tagline: "O orquestrador",
+  state: "SEMPRE ATIVO",
+  whatIs:
+    "Recebe sua instrução e decide, na hora, o que precisa consultar pra responder bem. Como um gerente de projeto: não faz tudo sozinho, mas sabe exatamente a quem delegar cada parte.",
+  whenEnters: "É o ponto de entrada de toda interação — orquestra os outros componentes.",
+  examples: [
+    "Lê AGENTS.md antes de tudo",
+    "Escolhe uma Skill quando reconhece o procedimento",
+    "Aciona MCP quando precisa de dado externo",
+    "Delega a um Subagent trabalho especializado e isolado",
+  ],
+  dontPut: "Ele não guarda regras nem procedimentos — isso vive nos componentes ao redor.",
+  thinkOf: "\"O maestro\" — rege, decide o tempo e indica quem entra em cada momento.",
+};
+
+// Lookup por nó (inclui o agente) e a ordem de navegação no guia.
+export const GUIDE_BY_NODE: Record<NodeId, ComponentGuide> = Object.fromEntries(
+  [AGENT, ...COMPONENTS].map((c) => [c.id, c])
+) as Record<NodeId, ComponentGuide>;
+
+export const GUIDE_ORDER: NodeId[] = ["agent", "agents-md", "skills", "mcp", "subagents"];
 
 // O teste rápido de decisão — qual componente usar.
 export const QUICK_TEST: { question: string; answer: string }[] = [

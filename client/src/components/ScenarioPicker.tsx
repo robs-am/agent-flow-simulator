@@ -6,6 +6,7 @@ import { Github, FolderCog } from "lucide-react";
 
 interface ScenarioPickerProps {
   onRunExample: (text: string) => void;
+  onRunAI: (text: string) => void;
   onRunGithub: (owner: string, repo: string) => void;
   onRunLocal: (path: string) => void;
   disabled: boolean;
@@ -17,6 +18,7 @@ interface ScenarioPickerProps {
  */
 export default function ScenarioPicker({
   onRunExample,
+  onRunAI,
   onRunGithub,
   onRunLocal,
   disabled,
@@ -36,7 +38,7 @@ export default function ScenarioPicker({
       </TabsList>
 
       <TabsContent value="examples">
-        <ExamplesPanel onRun={onRunExample} disabled={disabled} />
+        <ExamplesPanel onRun={onRunExample} onRunAI={onRunAI} disabled={disabled} />
       </TabsContent>
 
       <TabsContent value="github">

@@ -20,7 +20,7 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-4 py-10">
-        <p className="font-mono-tight text-xs uppercase tracking-[0.2em] text-[hsl(var(--secondary))] mb-2">
+        <p className="font-mono-tight text-xl uppercase tracking-[0.2em] text-[hsl(var(--secondary))] mb-2">
           Agent Flow Simulator
         </p>
         <h1 className="text-2xl font-bold tracking-tight mb-1">

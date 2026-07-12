@@ -19,6 +19,12 @@ export function simulateRequest(request: string): Promise<SimulationResult> {
   return post("/simulate", { request });
 }
 
+// Texto livre classificado pelo Claude (mais lento e custa chamada de API,
+// mas entende qualquer ação — não só os exemplos).
+export function classifyRequestAI(request: string): Promise<SimulationResult> {
+  return post("/simulate/ai", { request });
+}
+
 export function analyzeGithubRepo(owner: string, repo: string): Promise<SimulationResult> {
   return post("/analyze/github", { owner, repo });
 }

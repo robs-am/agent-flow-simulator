@@ -24,6 +24,10 @@ anotação nos nós ativos do `FlowDiagram`, tipografia monoespaçada
 - Componentes shadcn ficam em `src/components/ui/` e não devem ser
   editados pra lógica específica do app — se precisar de uma variação,
   compor por fora, não alterar o componente base
+- `ScenarioPicker.tsx` é só o casco das 3 abas — a lógica de cada uma
+  vive em componente próprio (`ExamplesPanel.tsx`, `GithubForm.tsx`,
+  `LocalForm.tsx`). Não engordar `ScenarioPicker.tsx` de novo; um
+  componente novo por aba/formulário
 - O diagrama (`FlowDiagram.tsx`) é SVG puro, sem lib de gráficos —
   cores vêm das CSS custom properties definidas em `globals.css`, nunca
   hexadecimal direto no componente

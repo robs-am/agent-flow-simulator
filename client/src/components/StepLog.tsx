@@ -28,9 +28,9 @@ export default function StepLog({ steps, revealedCount }: StepLogProps) {
             <Badge variant="outline" className="mt-0.5 shrink-0">
               {String(i + 1).padStart(2, "0")}
             </Badge>
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold text-sm">{step.title}</p>
-              <p className="text-sm text-[hsl(var(--muted-foreground))] mt-0.5">
+              <p className="text-sm text-[hsl(var(--muted-foreground))] mt-0.5 whitespace-pre-line font-mono-tight">
                 {step.explanation}
               </p>
             </div>
